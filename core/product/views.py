@@ -32,9 +32,28 @@ class ListProducts(APIView):
         serializer_class = ProductSerializer(query, many=True)
         return Response(serializer_class.data)
     
+    def post(self, request):
+        serializer_obj = ProductSerializer(data=request.data)
+        if serializer_obj.is_valid():
+            product_saved = serializer_obj.save()
+            return Response({"Success": "Product '{}' created successfully".format(product_saved.name)}, status=201)
+        return Response(serializer_obj.errors, status=400)
+        
 class ProductDetailedView(APIView):
 
     def get(self, request, pid):
-        product = Product.objects.filter(product_id=pid)
+        product = Product.objects.get(product_id=pid)
         serializer_class = ProductSerializer(product)
         return Response(serializer_class.data)
+    
+    def put(self, request, pid):
+        product_obj = Product.objects.get(product_id=pid)
+        serializer_obj = ProductSerializer(product_obj, data=request.data)
+        if serializer_obj.is_valid():
+            product_saved = serializer_obj.save()
+            return Response({"Success": "Product '{}' updated successfully".format(product_saved.name)}, status=201)
+        return Response(serializer_obj.errors, status=400)
+    
+    def delete(self, request, pid):
+        product_obj = Product.objects.get(product_id=pid).delete()
+        return Response({"Success": "Product '{}' deleted successfully".format(pid)}, status=200)
