@@ -17,11 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-from product.views import ListProducts, ProductDetailedView
+from product.views import ListProducts, ProductDetailedView, ListProductsMixins, DetailedProductMixins, ListProductsGeneric, DetailProductsGeneric, SpecialProductsGeneric
 
 urlpatterns = [
     path('productlist/', views.listproducts, name='ListProduct'),
     path('messagelist/', views.listmessages, name='ListMessages'),
     path('classproductlist/', ListProducts.as_view(), name='ListProductClass'),
     path('classdetailedproduct/<int:pid>/', ProductDetailedView.as_view(), name='DetailedProduct'),
+    path('mixinpath/', ListProductsMixins.as_view(), name='mp'),
+    path('detailedmixinpath/<int:pk>/', DetailedProductMixins.as_view(), name='detailedmp'),
+    path('productgenericlist/', ListProductsGeneric.as_view(), name='lpgeneric'),
+    path('productgenericdetail/<int:pk>/', DetailProductsGeneric.as_view(), name='lpgenericdetail'),
+    path('specialproductgeneric/', SpecialProductsGeneric.as_view(), name='specialproductgeneric'),
 ]
