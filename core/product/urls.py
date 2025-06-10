@@ -18,11 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 from product.views import ListProducts, ProductDetailedView, ListProductsMixins, DetailedProductMixins, ListProductsGeneric, DetailProductsGeneric, SpecialProductsGeneric
-from product.views import product_list
+from product.views import product_list, ProductViewSet
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
 router = DefaultRouter()
-router.register(r'products', product_list, basename='product-list')
+router.register(r'products', ProductViewSet, basename='product-list')
 
 urlpatterns = [
     path('productlist/', views.listproducts, name='ListProduct'),
