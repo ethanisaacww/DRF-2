@@ -18,6 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 from product.views import ListProducts, ProductDetailedView, ListProductsMixins, DetailedProductMixins, ListProductsGeneric, DetailProductsGeneric, SpecialProductsGeneric
+from product.views import product_list
+from rest_framework.routers import DefaultRouter, SimpleRouter
+
+router = DefaultRouter()
+router.register(r'products', product_list, basename='product-list')
 
 urlpatterns = [
     path('productlist/', views.listproducts, name='ListProduct'),
@@ -29,4 +34,6 @@ urlpatterns = [
     path('productgenericlist/', ListProductsGeneric.as_view(), name='lpgeneric'),
     path('productgenericdetail/<int:pk>/', DetailProductsGeneric.as_view(), name='lpgenericdetail'),
     path('specialproductgeneric/', SpecialProductsGeneric.as_view(), name='specialproductgeneric'),
-]
+    ### ORM ###
+    path('productlistorm/', product_list, name='product_list_orm'),
+]+ router.urls

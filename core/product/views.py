@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.db import connection
+from django.db import transaction
+from django.db.models import Q
 from .models import Product
 from .serializer import ProductSerializer, MessageSerializer
 from rest_framework.response import Response
@@ -101,3 +104,46 @@ class SpecialProductsGeneric(generics.ListCreateAPIView,
                              generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+### ORM ###
+
+def product_list_(request):
+    products = Product.objects.all()
+    print(products)
+    print(products.query)
+    print(connection.queries)
+    return render(request, 'output.html', {'products': products})
+
+# or statement
+def product_list_or(request):
+    products = Product.objects.filter(~Q(name__startswith='iPhone') | Q(name__endswith='discounted') | Q(name__startswith='Pixel'))
+    print(products)
+    print(connection.queries)
+    return render(request, 'output.html', {'products': products})
+
+# and statement
+def product_list_and(request):
+    products = Product.objects.filter(product_id=1212) & Product.objects.filter(price=1099.99)
+    print(products)
+    print(connection.queries)
+    return render(request, 'output.html', {'products': products})
+
+def product_list(request):
+    products = Product.objects.filter(Q(product_id=1212) & Q(price=1099.99))
+    print(products)
+    print(connection.queries)
+    return render(request, 'output.html', {'products': products})
+
+# def discount_products(request):
+#     google = Product.objects.select_for_update().get(category=1)
+#     apple = Product.objects.select_for_update().get(category=2)
+
+#     # atomicity - execute commits at the same time, after making sure none fail
+#     with transaction.atomic():
+#         for product in google:
+#             product.price = product.price * 0.9
+#             product.save()
+#         for product in apple:
+#             product.price = product.price * 0.8
+#             product.save()
+#     return render(request, 'output.html', {'products': google | apple})
